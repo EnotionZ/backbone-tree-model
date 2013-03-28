@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Mocha Tests</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="mocha.css" />
+		<script src="underscore-min.js"></script>
+		<script src="backbone-min.js"></script>
+		<script src="../src/backbone.treemodel.js"></script>
+	</head>
+	<body>
+		<div id="mocha"></div>
+		<script src="mocha.js"></script>
+		<script src="expect.js"></script>
+		<script>mocha.setup('bdd')</script>
+		<script src="backbone.tree_test.js"></script>
+		<script> mocha.run(); </script>
+	</body>
+</html>
+
