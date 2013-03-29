@@ -1,11 +1,12 @@
 (function() {
+
 	var ArrMethods = {
-		findById: function(id) {
+		rwhere: function(attrs) {
 			var nodes = [];
 			_.each(this, function(model) {
-				nodes = nodes.concat(model.findById(id));
+				nodes = nodes.concat(model.where(attrs));
 			});
-			return wrapArray(nodes);
+			return wrapArray(_.uniq(nodes));
 		}
 	};
 	var wrapArray = function(array) { return _.extend(array, ArrMethods); };
@@ -18,44 +19,86 @@
 			this.add(node.nodes);
 		},
 
-		// returns descendant matching :id
-		// TODO: make this faster by returning the first matched node
-		findById: function(id) { return this.where({id: id})[0]; },
+		/**
+		 * returns descendant matching :id
+		 */
+		findById: function(id) { return this.findWhere({id: id}); },
 
-		// return all matched descendants
-		where: function(obj, excludeCurrentNode) {
-			var nodes = [];
+		/**
+		 * return first matched descendant
+		 */
+		findWhere: function(attrs) { return this.where(attrs, true); },
+
+		/**
+		 * return all matched descendants
+		 */
+		where: function(attrs, first, excludeCurrentNode) {
+			var nodes = [], matchedNode;
+
+			// manual (non-collection method) check on the current node
 			if(!excludeCurrentNode) {
-				nodes = nodes.concat(_.where([this.toJSON()], obj));
+				nodes = nodes.concat(_.where([this.toJSON()], attrs));
 			}
-			nodes = nodes.concat(this._nodes.where(obj));
-			this._nodes.each(function(node) {
-				nodes = nodes.concat(node.where(obj, true));
-			});
-			return wrapArray(nodes);
+
+			if(first) {
+				// return if first/current node is a match
+				if(nodes[0]) return nodes[0];
+
+				// return first matched node in children collection
+				matchedNode = this._nodes.where(attrs, true);
+				if(matchedNode) return matchedNode;
+
+				// recursive call on children nodes
+				for(var i=0, len=this._nodes.length; i<len; i++) {
+					matchedNode = this._nodes.models[i].where(attrs, true, true);
+					if(matchedNode) return matchedNode;
+				}
+			} else {
+				// add all matched children
+				nodes = nodes.concat(this._nodes.where(attrs));
+
+				// recursive call on children nodes
+				this._nodes.each(function(node) {
+					nodes = nodes.concat(node.where(attrs, false, true));
+				});
+
+				// return all matched nodes
+				return wrapArray(nodes);
+			}
 		},
 
-		// returns true if current node is root node
+		/**
+		 * returns true if current node is root node
+		 */
 		isRoot: function() { return this === this.root(); },
 
-		// returns the root for any node
+		/**
+		 * returns the root for any node
+		 */
 		root: function() { return this.parent() && this.parent().root() || this; },
 
-		// returns the parent node
+		/**
+		 * returns the parent node
+		 */
 		parent: function() { return this.collection && this.collection.parent || null; },
 
-		// returns the children Backbone Collection if children nodes exist
+		/**
+		 * returns the children Backbone Collection if children nodes exist
+		 */
 		nodes: function() { return this._nodes.length && this._nodes || null; },
 
-		// add child/children nodes to Backbone Collection
+		/**
+		 * add child/children nodes to Backbone Collection
+		 */
 		add: function(nodes) { this._nodes.add(nodes); }
 	});
+
 	var TreeCollection = Backbone.TreeCollection = Backbone.Collection.extend({
 		model: TreeModel,
-		findById: function(id) {
+		rwhere: function(attrs) {
 			var nodes = [];
 			this.each(function(model) {
-				nodes = nodes.concat(model.findById(id));
+				nodes = nodes.concat(model.where(attrs));
 			});
 			return wrapArray(nodes);
 		}

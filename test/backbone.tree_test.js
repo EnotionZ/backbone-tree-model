@@ -153,4 +153,16 @@ describe('Backbone Tree', function() {
 		});
 	});
 
+	describe('#rwhere', function() {
+		it('Should be supported for node children collection', function() {
+			expect(tree.nodes().rwhere({tagname: 'p'}).length).to.be(2);
+			expect(tree.findById('sidebar').nodes().rwhere({tagname: 'p'}).length).to.be(1);
+		});
+
+		it('Should be supported from a chained #where call', function() {
+			expect(tree.where({tagname: 'div'}).rwhere({tagname: 'span'}).length).to.be(2);
+			expect(tree.where({tagname: 'anchor'}).rwhere({tagname: 'span'}).length).to.be(1);
+		});
+	});
+
 });
