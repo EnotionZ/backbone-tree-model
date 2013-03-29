@@ -18,13 +18,25 @@
 			this.add(node.nodes);
 		},
 
-		// returns all descendants matching :id
-		findById: function(id) {
+		// returns descendant matching :id
+		// TODO: make this faster by returning the first matched node
+		findById: function(id) { return this.where({id: id})[0]; },
+
+		// return all matched descendants
+		where: function(obj, excludeCurrentNode) {
 			var nodes = [];
-			if(this.id === id) nodes.push(this);
-			if(this._nodes) nodes = nodes.concat(this._nodes.findById(id));
+			if(!excludeCurrentNode) {
+				nodes = nodes.concat(_.where([this.toJSON()], obj));
+			}
+			nodes = nodes.concat(this._nodes.where(obj));
+			this._nodes.each(function(node) {
+				nodes = nodes.concat(node.where(obj, true));
+			});
 			return wrapArray(nodes);
 		},
+
+		// returns true if current node is root node
+		isRoot: function() { return this === this.root(); },
 
 		// returns the root for any node
 		root: function() { return this.parent() && this.parent().root() || this; },
