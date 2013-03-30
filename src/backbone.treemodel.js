@@ -70,7 +70,7 @@
 		/**
 		 * returns true if current node is root node
 		 */
-		isRoot: function() { return this === this.root(); },
+		isRoot: function() { return this.parent() === null; },
 
 		/**
 		 * returns the root for any node
@@ -90,7 +90,51 @@
 		/**
 		 * add child/children nodes to Backbone Collection
 		 */
-		add: function(nodes) { this._nodes.add(nodes); }
+		add: function() { this._nodes.add.apply(this._nodes, arguments); },
+
+		/**
+		 * returns the node to the right
+		 */
+		next: function() {
+			if(this.isRoot()) return null;
+			var currentIndex = this.collection.indexOf(this);
+			if(currentIndex < this.collection.length-1) {
+				return this.collection.at(currentIndex+1);
+			} else {
+				return null;
+			}
+		},
+
+		/**
+		 * returns the node to the left
+		 */
+		prev: function() {
+			if(this.isRoot()) return null;
+			var currentIndex = this.collection.indexOf(this);
+			if(currentIndex > 0) {
+				return this.collection.at(currentIndex-1);
+			} else {
+				return null;
+			}
+		},
+
+		/**
+		 * inserts a node before the current node
+		 */
+		insertBefore: function(nodes) {
+			if(!this.isRoot()) {
+				this.collection.add(nodes, {at: this.collection.indexOf(this)});
+			}
+		},
+
+		/**
+		 * inserts a node after the current node
+		 */
+		insertAfter: function(nodes) {
+			if(!this.isRoot()) {
+				this.collection.add(nodes, {at: this.collection.indexOf(this)+1});
+			}
+		}
 	});
 
 	var TreeCollection = Backbone.TreeCollection = Backbone.Collection.extend({
