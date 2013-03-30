@@ -48,6 +48,8 @@ sidebar.get('width');                                      // 300
 (sidebar.parent() === tree)                                // true
 (sidebar.root() === tree)                                  // true
 tree.isRoot();                                             // true
+tree.findById('sidebar').next().id;			   // "content"
+tree.findById('content').prev().id;			   // "sidebar"
 ```
 
 ###3. Special Search
@@ -89,4 +91,12 @@ sidebar.add([
   { tagname: 'span'}
 ]);
 sidebar.where({tagname: 'span'}).length;                   // 3
+
+// adding a node to the left of the current node
+sidebar.insertBefore({id: 'sidebar_left'});
+sidebar.prev().id					   // "sidebar_left"
+
+// adding a node to the right of the current node
+sidebar.insertAfter({id: 'sidebar_right'});
+sidebar.next().id					   // "sidebar_right"
 ```
