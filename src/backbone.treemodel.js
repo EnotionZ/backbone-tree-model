@@ -88,11 +88,6 @@
 		nodes: function() { return this._nodes.length && this._nodes || null; },
 
 		/**
-		 * add child/children nodes to Backbone Collection
-		 */
-		add: function() { this._nodes.add.apply(this._nodes, arguments); },
-
-		/**
 		 * returns the node to the right
 		 */
 		next: function() {
@@ -119,12 +114,21 @@
 		},
 
 		/**
+		 * add child/children nodes to Backbone Collection
+		 */
+		add: function() {
+			this._nodes.add.apply(this._nodes, arguments);
+			return this;
+		},
+
+		/**
 		 * inserts a node before the current node
 		 */
 		insertBefore: function(nodes) {
 			if(!this.isRoot()) {
 				this.collection.add(nodes, {at: this.collection.indexOf(this)});
 			}
+			return this;
 		},
 
 		/**
@@ -134,6 +138,7 @@
 			if(!this.isRoot()) {
 				this.collection.add(nodes, {at: this.collection.indexOf(this)+1});
 			}
+			return this;
 		}
 	});
 

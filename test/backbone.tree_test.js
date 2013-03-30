@@ -118,15 +118,13 @@ describe('Backbone Tree', function() {
 
 	describe('#add', function() {
 		it('Should support adding single node', function() {
-			var sidebar = tree.findById('sidebar');
-			sidebar.add({id: 'title_1'});
+			var sidebar = tree.findById('sidebar').add({id: 'title_1'});
 			expect(sidebar.nodes().length).to.be(4);
 			expect(sidebar.findById('title_1')).to.be.ok();
 		});
 
 		it('Should support adding array of nodes', function() {
-			var sidebar = tree.findById('sidebar');
-			sidebar.add([
+			var sidebar = tree.findById('sidebar').add([
 				{
 					id: 'title_2',
 					tagname: 'h1',
@@ -155,17 +153,19 @@ describe('Backbone Tree', function() {
 
 	describe('#insertBefore', function() {
 		it('Should support adding objects to the left of a node', function() {
-			tree.findById('wrapper').insertBefore({id: 'left_wrapper'});
+			var wrapper = tree.findById('wrapper').insertBefore({id: 'left_wrapper'});
 			expect(tree.nodes().length).to.be(2);
 			expect(tree.nodes().first().id).to.be('left_wrapper');
+			expect(wrapper.prev().id).to.be('left_wrapper');
 		});
 	});
 
 	describe('#insertAfter', function() {
 		it('Should support adding objects to the right of a node', function() {
-			tree.findById('wrapper').insertAfter({id: 'right_wrapper'});
+			var wrapper = tree.findById('wrapper').insertAfter({id: 'right_wrapper'});
 			expect(tree.nodes().length).to.be(2);
 			expect(tree.nodes().last().id).to.be('right_wrapper');
+			expect(wrapper.next().id).to.be('right_wrapper');
 		});
 	});
 
