@@ -56,11 +56,12 @@
 
 				// return first matched node in children collection
 				matchedNode = this._nodes.where(attrs, true);
-				if(matchedNode) return matchedNode;
+				if(_.isArray(matchedNode)) matchedNode = matchedNode[0];
+				if(matchedNode instanceof Backbone.TreeModel) return matchedNode;
 
 				// recursive call on children nodes
 				for(var i=0, len=this._nodes.length; i<len; i++) {
-					matchedNode = this._nodes.models[i].where(attrs, true, true);
+					matchedNode = this._nodes.at(i).where(attrs, true, true);
 					if(matchedNode) return matchedNode;
 				}
 			} else {
