@@ -21,7 +21,7 @@ var treeObject = {
 			tagname: 'div',
 			width: 600,
 			nodes: [
-        { tagname: 'div' },
+				{ tagname: 'div' },
 				{
 					tagname: 'p',
 					nodes: [
@@ -46,11 +46,16 @@ tree.get('tagname');                                       // returns "body", `t
 var nodes = tree.nodes();                                  // `nodes` is a backbone collection
 var sidebar = nodes.first();                               // `sidebar` is a backbone model
 sidebar.get('width');                                      // 300
+
+tree.find('sidebar').next().id;                            // "content"
+tree.find('content').prev().id;                            // "sidebar"
+
+// node hierarchy
 (sidebar.parent() === tree)                                // true
 (sidebar.root() === tree)                                  // true
 tree.isRoot();                                             // true
-tree.find('sidebar').next().id;                            // "content"
-tree.find('content').prev().id;                            // "sidebar"
+tree.contains(sidebar);                                    // true
+sidebar.contains(tree);                                    // false
 ```
 
 ###3. Special Search

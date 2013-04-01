@@ -94,6 +94,15 @@ describe('Backbone Tree', function() {
 		});
 	});
 
+	describe('#contains', function() {
+		it('Should return true if node is a descendant of current node', function() {
+			expect(tree.contains(tree.find('sidebar'))).to.be.ok();
+		});
+		it('Should return false if node is not a descendant of current node', function() {
+			expect(tree.find('sidebar').contains(tree)).to.not.be.ok();
+		});
+	});
+
 	describe('#parent', function() {
 		it('Should return the parent node', function() {
 			var sidebar = tree.find('sidebar');
@@ -149,6 +158,14 @@ describe('Backbone Tree', function() {
 			expect(sidebar.find('anchor')).to.be.ok();
 			expect(sidebar.find('anchor').nodes().length).to.be(1);
 		});
+
+		it('Should support adding TreeModel nodes', function() {
+			// place sidebar before title node
+			tree.find('content').add(tree.find('sidebar'));
+			expect(tree.find('content').nodes().length).to.be(3);
+			expect(tree.find('wrapper').nodes().length).to.be(1);
+			expect(tree.find('sidebar').parent()).to.be(tree.find('content'));
+		});
 	});
 
 	describe('#insertBefore', function() {
@@ -158,6 +175,14 @@ describe('Backbone Tree', function() {
 			expect(tree.nodes().first().id).to.be('left_wrapper');
 			expect(wrapper.prev().id).to.be('left_wrapper');
 		});
+
+		it('Should support inserting TreeModel nodes', function() {
+			// place sidebar before title node
+			tree.find('title').insertBefore(tree.find('sidebar'));
+			expect(tree.find('content').nodes().length).to.be(3);
+			expect(tree.find('wrapper').nodes().length).to.be(1);
+			expect(tree.find('sidebar').parent()).to.be(tree.find('content'));
+		});
 	});
 
 	describe('#insertAfter', function() {
@@ -166,6 +191,14 @@ describe('Backbone Tree', function() {
 			expect(tree.nodes().length).to.be(2);
 			expect(tree.nodes().last().id).to.be('right_wrapper');
 			expect(wrapper.next().id).to.be('right_wrapper');
+		});
+
+		it('Should support inserting TreeModel nodes', function() {
+			// place sidebar before title node
+			tree.find('title').insertAfter(tree.find('sidebar'));
+			expect(tree.find('content').nodes().length).to.be(3);
+			expect(tree.find('wrapper').nodes().length).to.be(1);
+			expect(tree.find('sidebar').parent()).to.be(tree.find('content'));
 		});
 	});
 

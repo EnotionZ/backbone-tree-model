@@ -57,7 +57,7 @@
 				// return first matched node in children collection
 				matchedNode = this._nodes.where(attrs, true);
 				if(_.isArray(matchedNode)) matchedNode = matchedNode[0];
-				if(matchedNode instanceof Backbone.TreeModel) return matchedNode;
+				if(matchedNode instanceof Backbone.Model) return matchedNode;
 
 				// recursive call on children nodes
 				for(var i=0, len=this._nodes.length; i<len; i++) {
@@ -87,6 +87,15 @@
 		 * returns the root for any node
 		 */
 		root: function() { return this.parent() && this.parent().root() || this; },
+
+		/**
+		 * checks if current node contains argument node
+		 */
+		contains: function(node) {
+			if(!node || !(node.isRoot && node.parent) || node.isRoot()) return false;
+			var parent = node.parent();
+			return (parent === this) || this.contains(parent);
+		},
 
 		/**
 		 * returns the parent node
@@ -164,7 +173,8 @@
 		/**
 		 * add child/children nodes to Backbone Collection
 		 */
-		add: function() {
+		add: function(node) {
+			if(node instanceof Backbone.Model && node.collection) node.collection.remove(node);
 			this._nodes.add.apply(this._nodes, arguments);
 			return this;
 		},
@@ -172,20 +182,16 @@
 		/**
 		 * inserts a node before the current node
 		 */
-		insertBefore: function(nodes) {
-			if(!this.isRoot()) {
-				this.collection.add(nodes, {at: this.index()});
-			}
+		insertBefore: function(node) {
+			if(!this.isRoot()) this.parent().add(node, {at: this.index()});
 			return this;
 		},
 
 		/**
 		 * inserts a node after the current node
 		 */
-		insertAfter: function(nodes) {
-			if(!this.isRoot()) {
-				this.collection.add(nodes, {at: this.index()+1});
-			}
+		insertAfter: function(node) {
+			if(!this.isRoot()) this.parent().add(node, {at: this.index()+1});
 			return this;
 		},
 
