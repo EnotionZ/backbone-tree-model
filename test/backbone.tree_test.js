@@ -199,6 +199,14 @@ describe('Backbone Tree', function() {
 		});
 	});
 
+	describe('#empty', function() {
+		it('Should remove all children in current node', function() {
+			tree.empty();
+			expect(tree.find('wrapper')).to.not.be.ok();
+			expect(tree.nodes()).to.not.be.ok();
+		});
+	});
+
 	describe('#where for Collection/Array', function() {
 		it('Should be supported for node children collection', function() {
 			expect(tree.nodes().where({tagname: 'p'}, {deep: true}).length).to.be(2);
@@ -208,6 +216,20 @@ describe('Backbone Tree', function() {
 		it('Should be supported from a chained #where call', function() {
 			expect(tree.where({tagname: 'div'}).where({tagname: 'span'}).length).to.be(2);
 			expect(tree.where({tagname: 'anchor'}).where({tagname: 'span'}).length).to.be(1);
+		});
+	});
+
+	describe('#toJSON', function() {
+		it('Should return JSON starting from node, account for node changes', function() {
+			tree.find('sidebar').remove(); // perform a change
+
+			var treeJSON = tree.toJSON();
+			expect(treeJSON.nodes[0].nodes.length).to.be(1);
+			expect(treeJSON.nodes[0].nodes[0].id).to.be('content');
+
+			var wrapperJSON = tree.find('wrapper').toJSON();
+			expect(wrapperJSON.nodes.length).to.be(1);
+			expect(wrapperJSON.nodes[0].id).to.be('content');
 		});
 	});
 

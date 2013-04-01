@@ -20,6 +20,16 @@
 		},
 
 		/**
+		 * returns JSON object representing tree, account for branch changes
+		 */
+		toJSON: function() {
+			var jsonObj = Backbone.Model.prototype.toJSON.apply(this, arguments);
+			var children = this._nodes.toJSON();
+			if(children.length) jsonObj.nodes = children;
+			return jsonObj;
+		},
+
+		/**
 		 * returns descendant matching :id
 		 */
 		find: function(id) { return this.findWhere({id: id}); },
@@ -140,6 +150,14 @@
 				}
 				return this;
 			}
+		},
+
+		/**
+		 * removes all children nodes
+		 */
+		empty: function() {
+			this._nodes.reset();
+			return this;
 		},
 
 		/**
