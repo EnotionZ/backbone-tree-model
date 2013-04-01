@@ -16,7 +16,7 @@
 			Backbone.Model.prototype.constructor.apply(this, arguments);
 			this._nodes = new TreeCollection();
 			this._nodes.parent = this;
-			this.add(node.nodes);
+			if(node && node.nodes) this.add(node.nodes);
 		},
 
 		/**
