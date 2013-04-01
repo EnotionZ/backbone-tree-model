@@ -48,13 +48,13 @@ sidebar.get('width');                                      // 300
 (sidebar.parent() === tree)                                // true
 (sidebar.root() === tree)                                  // true
 tree.isRoot();                                             // true
-tree.findById('sidebar').next().id;			   // "content"
-tree.findById('content').prev().id;			   // "sidebar"
+tree.find('sidebar').next().id;                            // "content"
+tree.find('content').prev().id;                            // "sidebar"
 ```
 
 ###3. Special Search
 ```javascript
-var content = tree.findById('content');                    // `findById` returns unique node
+var content = tree.find('content');                        // `find` returns unique node
 var paragraphNode = tree.findWhere({tagname: 'p'});        // `findWhere` returns first match
 var paragraphNodes = tree.where({tagname: 'p'});           // `where` returns all matches
 
@@ -66,18 +66,18 @@ tree.where({ tagname: 'p' }).length;                       // 2
 // Recursive-where for TreeCollection
 var nodes = tree.nodes();
 nodes.where({tagname: 'div'}).length;                      // 2
-nodes.rwhere({tagname: 'div'}).length;                     // 3
+nodes.where({tagname: 'div'}, {deep: true}).length;        // 3
 
 // Special mixed TreeModel node Array
 var specialArray = tree.where({tagname: 'div'});           // Array with standard methods (push/pop/splice/etc.)
 specialArray.length;                                       // 3
-var array2 = specialArray.rwhere({tagname: 'span'});       // has recursive-where method and returns special array
+var array2 = specialArray.where({tagname: 'span'});        // has where method and returns special array
 array2.length;                                             // 2
 ```
 
 ###4. Node Operations
 ```javascript
-var sidebar = tree.findById('sidebar');
+var sidebar = tree.find('sidebar');
 
 // add single node
 sidebar.where({tagname: 'p'}).length;                      // 1
@@ -86,7 +86,7 @@ sidebar.where({tagname: 'p'}).length;                      // 2
 
 // add array of objects
 sidebar.where({tagname: 'span'}).length;                   // 1
-sidebar.add([                                              
+sidebar.add([
   { tagname: 'span'},
   { tagname: 'span'}
 ]);
@@ -94,9 +94,9 @@ sidebar.where({tagname: 'span'}).length;                   // 3
 
 // adding a node to the left of the current node
 sidebar.insertBefore({id: 'sidebar_left'});
-sidebar.prev().id					   // "sidebar_left"
+sidebar.prev().id                                          // "sidebar_left"
 
 // adding a node to the right of the current node
 sidebar.insertAfter({id: 'sidebar_right'});
-sidebar.next().id					   // "sidebar_right"
+sidebar.next().id                                          // "sidebar_right"
 ```

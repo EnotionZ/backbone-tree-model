@@ -1,7 +1,7 @@
 (function() {
 
 	var ArrMethods = {
-		rwhere: function(attrs) {
+		where: function(attrs) {
 			var nodes = [];
 			_.each(this, function(model) {
 				nodes = nodes.concat(model.where(attrs));
@@ -22,7 +22,7 @@
 		/**
 		 * returns descendant matching :id
 		 */
-		findById: function(id) { return this.findWhere({id: id}); },
+		find: function(id) { return this.findWhere({id: id}); },
 
 		/**
 		 * return first matched descendant
@@ -139,17 +139,37 @@
 				this.collection.add(nodes, {at: this.collection.indexOf(this)+1});
 			}
 			return this;
+		},
+
+		/**
+		 * shorthand for getting/inserting nodes before
+		 */
+		before: function(nodes) {
+			if(nodes) return this.insertBefore(nodes);
+			return this.prev();
+		},
+
+		/**
+		 * shorthand for getting/inserting nodes before
+		 */
+		after: function(nodes) {
+			if(nodes) return this.insertAfter(nodes);
+			return this.next();
 		}
 	});
 
 	var TreeCollection = Backbone.TreeCollection = Backbone.Collection.extend({
 		model: TreeModel,
-		rwhere: function(attrs) {
-			var nodes = [];
-			this.each(function(model) {
-				nodes = nodes.concat(model.where(attrs));
-			});
-			return wrapArray(nodes);
+		where: function(attrs, opts) {
+			if(opts && opts.deep) {
+				var nodes = [];
+				this.each(function(model) {
+					nodes = nodes.concat(model.where(attrs));
+				});
+				return wrapArray(nodes);
+			} else {
+				return Backbone.Collection.prototype.where.apply(this, arguments);
+			}
 		}
 	});
 }).call(this);
