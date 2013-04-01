@@ -88,11 +88,19 @@
 		nodes: function() { return this._nodes.length && this._nodes || null; },
 
 		/**
+		 * returns index of node relative to collection
+		 */
+		index: function() {
+			if(this.isRoot()) return null;
+			return this.collection.indexOf(this);
+		},
+
+		/**
 		 * returns the node to the right
 		 */
 		next: function() {
 			if(this.isRoot()) return null;
-			var currentIndex = this.collection.indexOf(this);
+			var currentIndex = this.index();
 			if(currentIndex < this.collection.length-1) {
 				return this.collection.at(currentIndex+1);
 			} else {
@@ -105,7 +113,7 @@
 		 */
 		prev: function() {
 			if(this.isRoot()) return null;
-			var currentIndex = this.collection.indexOf(this);
+			var currentIndex = this.index();
 			if(currentIndex > 0) {
 				return this.collection.at(currentIndex-1);
 			} else {
@@ -126,7 +134,7 @@
 		 */
 		insertBefore: function(nodes) {
 			if(!this.isRoot()) {
-				this.collection.add(nodes, {at: this.collection.indexOf(this)});
+				this.collection.add(nodes, {at: this.index()});
 			}
 			return this;
 		},
@@ -136,7 +144,7 @@
 		 */
 		insertAfter: function(nodes) {
 			if(!this.isRoot()) {
-				this.collection.add(nodes, {at: this.collection.indexOf(this)+1});
+				this.collection.add(nodes, {at: this.index()+1});
 			}
 			return this;
 		},
