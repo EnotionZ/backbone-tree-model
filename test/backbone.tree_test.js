@@ -181,6 +181,24 @@ describe('Backbone Tree', function() {
 		});
 	});
 
+	describe('#remove', function() {
+		it('Should remove current node', function() {
+			tree.find('sidebar').remove();
+			expect(tree.find('wrapper').nodes().length).to.be(1);
+			expect(tree.find('wrapper').nodes().first().id).to.be('content');
+		});
+
+		it('Should remove first matched descedant', function() {
+			tree.remove({tagname: 'p'}, true);
+			expect(tree.where({tagname: 'p'}).length).to.be(1);
+		});
+
+		it('Should remove all matched descedants', function() {
+			tree.remove({tagname: 'p'});
+			expect(tree.where({tagname: 'p'}).length).to.be(0);
+		});
+	});
+
 	describe('#where for Collection/Array', function() {
 		it('Should be supported for node children collection', function() {
 			expect(tree.nodes().where({tagname: 'p'}, {deep: true}).length).to.be(2);

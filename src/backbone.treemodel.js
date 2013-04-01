@@ -122,6 +122,27 @@
 		},
 
 		/**
+		 * removes current node if no attributes arguments is passed,
+		 * otherswise remove matched nodes or first matched node
+		 */
+		remove: function(attrs, first) {
+			if(!attrs) {
+				if(this.isRoot()) return false; // can't remove root node
+				this.collection.remove(this);
+				return true;
+			} else {
+				if(first) {
+					this.where(attrs, true).remove();
+				} else {
+					_.each(this.where(attrs), function(node) {
+						if(node.collection) node.remove();
+					});
+				}
+				return this;
+			}
+		},
+
+		/**
 		 * add child/children nodes to Backbone Collection
 		 */
 		add: function() {

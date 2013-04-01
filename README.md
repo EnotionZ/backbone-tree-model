@@ -4,7 +4,7 @@
 
 ###1. Initialize
 ```javascript
-var tree = new Backbone.TreeModel({
+var treeObject = {
 	tagname: 'body',
 	nodes: [
 		{
@@ -36,7 +36,8 @@ var tree = new Backbone.TreeModel({
 			]
 		}
 	]
-});
+};
+var tree = new Backbone.TreeModel(treeObject);
 ```
 
 ###2. Traversing Tree
@@ -75,7 +76,7 @@ var array2 = specialArray.where({tagname: 'span'});        // has where method a
 array2.length;                                             // 2
 ```
 
-###4. Node Operations
+###4. Adding Nodes
 ```javascript
 var sidebar = tree.find('sidebar');
 
@@ -99,4 +100,23 @@ sidebar.prev().id                                          // "sidebar_left"
 // adding a node to the right of the current node
 sidebar.insertAfter({id: 'sidebar_right'});
 sidebar.next().id                                          // "sidebar_right"
+```
+
+###5. Removing Nodes
+```javascript
+var tree = new Backbone.TreeModel(treeObject);             // start over with original data
+tree.find('wrapper').nodes().length;                       // 2
+tree.find('sidebar').remove();                             // remove sidebar node
+tree.find('wrapper').nodes().length;                       // 1
+tree.find('wrapper').nodes().first().id;                   // "content"
+
+var tree = new Backbone.TreeModel(treeObject);             // start over with original data
+tree.where({tagname: 'span'}).length;                      // 2
+tree.remove({tagname: 'span'}, true);                      // remove first matched span
+tree.where({tagname: 'span'}).length;                      // 1
+
+var tree = new Backbone.TreeModel(treeObject);             // start over with original data
+tree.where({tagname: 'span'}).length;                      // 2
+tree.remove({tagname: 'span'});                            // remove all matched nodes
+tree.where({tagname: 'span'}).length;                      // 0
 ```
