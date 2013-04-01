@@ -105,6 +105,12 @@ sidebar.prev().id                                          // "sidebar_left"
 // adding a node to the right of the current node
 sidebar.insertAfter({id: 'sidebar_right'});
 sidebar.next().id                                          // "sidebar_right"
+
+// adding or inserting other nodes in the tree will perform a "move"
+var tree = new Backbone.TreeModel(treeObject);             // start over with original data
+tree.find('content').add(tree.find('sidebar'));            // add existing node
+tree.find('content').nodes().length;                       // 3
+tree.find('sidebar').parent() == tree.find('content');     // true
 ```
 
 ###5. Removing Nodes
