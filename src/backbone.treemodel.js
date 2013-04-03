@@ -183,7 +183,10 @@
 		 * inserts a node before the current node
 		 */
 		insertBefore: function(node) {
-			if(!this.isRoot()) this.parent().add(node, {at: this.index()});
+			if(!this.isRoot()) {
+				if(node instanceof Backbone.Model && node.collection) node.collection.remove(node);
+				this.parent().add(node, {at: this.index()});
+			}
 			return this;
 		},
 
@@ -191,7 +194,10 @@
 		 * inserts a node after the current node
 		 */
 		insertAfter: function(node) {
-			if(!this.isRoot()) this.parent().add(node, {at: this.index()+1});
+			if(!this.isRoot()) {
+				if(node instanceof Backbone.Model && node.collection) node.collection.remove(node);
+				this.parent().add(node, {at: this.index()+1});
+			}
 			return this;
 		},
 
