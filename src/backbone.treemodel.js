@@ -46,9 +46,7 @@
 			var nodes = [], matchedNode;
 
 			// manual (non-collection method) check on the current node
-			if(!excludeCurrentNode) {
-				nodes = nodes.concat(_.where([this.toJSON()], attrs));
-			}
+			if(!excludeCurrentNode && _.where([this.toJSON()], attrs)[0]) nodes.push(this);
 
 			if(first) {
 				// return if first/current node is a match

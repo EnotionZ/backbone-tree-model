@@ -2,6 +2,7 @@ var tree;
 describe('Backbone Tree', function() {
 	beforeEach(function() {
 		tree = new Backbone.TreeModel({
+			id: 'root',
 			tagname: 'body',
 			nodes: [
 				{
@@ -61,6 +62,9 @@ describe('Backbone Tree', function() {
 			expect(sidebar.get('tagname')).to.be('div');
 
 			expect(tree.find('title').get('tagname')).to.be('h2');
+		});
+		it('should return root node if id matches root', function() {
+			expect(tree.find('root')).to.be(tree);
 		});
 	});
 
