@@ -29,11 +29,10 @@
 			return jsonObj;
 		},
 		toArray: function(){
+			var arr = [];
 			if (!this.isRoot())
-				var arr = [this];
-			else
-				var arr = [];
-			this._nodes.each(this._nodes.models,function(i,n){
+				arr = [this];
+			this._nodes.each(function(n){
 				arr = arr.concat(n.toArray(true));
 			});
 			return arr;
