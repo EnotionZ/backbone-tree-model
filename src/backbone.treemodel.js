@@ -33,7 +33,7 @@
 				var arr = [this];
 			else
 				var arr = [];
-			$.each(this._nodes.models,function(i,n){
+			this._nodes.each(this._nodes.models,function(i,n){
 				arr = arr.concat(n.toArray(true));
 			});
 			return arr;
