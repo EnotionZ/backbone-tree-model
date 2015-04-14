@@ -14,18 +14,14 @@
 	var TreeModel = Backbone.TreeModel = Backbone.Model.extend({
         constructor: function tree(node) {
             Backbone.Model.prototype.constructor.apply(this, arguments);
-
-            var CollectionConstructor = _.result(this, 'collectionConstructor');
-            this._nodes = new CollectionConstructor([], {
+            this._nodes = new this.collectionConstructor([], {
                 model : this.constructor
             });
             this._nodes.parent = this;
             if(node && node.nodes) this.add(node.nodes);
         },
 
-        collectionConstructor : function() {
-            return TreeCollection
-        },
+        collectionConstructor : null,
 
 		/**
 		 * returns JSON object representing tree, account for branch changes
@@ -238,4 +234,7 @@
 			}
 		}
 	});
+
+    Backbone.TreeModel.prototype.collectionConstructor = TreeCollection
+
 }).call(this);

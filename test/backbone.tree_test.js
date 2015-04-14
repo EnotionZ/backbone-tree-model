@@ -270,12 +270,10 @@ describe('Backbone Tree', function() {
 		});
 	});
 
-    describe('should be able to specify model constructor', function() {
+    describe('should be able to specify model constructor with Model', function() {
         var MyCollection = Backbone.TreeCollection.extend({}),
             MyModel = Backbone.TreeModel.extend({
-                collectionConstructor : function() {
-                    return MyCollection
-                }
+                collectionConstructor : MyCollection
             }),
 
             tree = new MyModel({
@@ -284,7 +282,10 @@ describe('Backbone Tree', function() {
                 nodes: [
                     {
                         id: 'wrapper',
-                        tagname: 'div'
+                        tagname: 'div',
+                        nodes: [
+                            { tagname: 'p' }
+                        ]
                     }
                 ]
             });
@@ -297,8 +298,12 @@ describe('Backbone Tree', function() {
             });
         });
 
-        it('Children collection should be instance of MyCollection', function() {
+        it('Child collection should be instance of MyCollection', function() {
             expect(tree.nodes() instanceof MyCollection).to.be.ok();
+
+            tree.nodes().forEach(function(child) {
+                expect(child.nodes() instanceof MyCollection).to.be.ok();
+            });
         });
     });
 });
