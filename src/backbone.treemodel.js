@@ -12,12 +12,16 @@
 	var wrapArray = function(array) { return _.extend(array, ArrMethods); };
 
 	var TreeModel = Backbone.TreeModel = Backbone.Model.extend({
-		constructor: function tree(node) {
-			Backbone.Model.prototype.constructor.apply(this, arguments);
-			this._nodes = new TreeCollection();
-			this._nodes.parent = this;
-			if(node && node.nodes) this.add(node.nodes);
-		},
+        constructor: function tree(node) {
+            Backbone.Model.prototype.constructor.apply(this, arguments);
+            this._nodes = new this.collectionConstructor([], {
+                model : this.constructor
+            });
+            this._nodes.parent = this;
+            if(node && node.nodes) this.add(node.nodes);
+        },
+
+        collectionConstructor : null,
 
 		/**
 		 * returns JSON object representing tree, account for branch changes
@@ -230,4 +234,7 @@
 			}
 		}
 	});
+
+    Backbone.TreeModel.prototype.collectionConstructor = TreeCollection
+
 }).call(this);
