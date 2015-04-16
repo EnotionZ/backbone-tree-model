@@ -27,7 +27,7 @@
 		 * returns JSON object representing tree, account for branch changes
 		 */
 		toJSON: function() {
-			var jsonObj = Backbone.Model.prototype.toJSON.apply(this, arguments);
+			var jsonObj = _.clone(_.omit(this.attributes, 'nodes'));
 			var children = this._nodes.toJSON();
 			if(children.length) jsonObj.nodes = children;
 			return jsonObj;
