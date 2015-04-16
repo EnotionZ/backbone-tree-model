@@ -12,13 +12,13 @@
 	} else if (typeof exports !== 'undefined') {
 		var _ = require('underscore');
 		var Backbone = require('backbone');
-		factory(root, exports, _, Backbone);
+		module.exports = factory(root, exports, _, Backbone);
 
 		// Finally, as a browser global.
 	} else {
-		root.BackboneTree = factory(root, {}, root._, root.Backbone);
+		root.BackboneTreeModel = factory(root, {}, root._, root.Backbone);
 	}
-}(this, function(root, BackboneTree, _, Backbone) {
+}(this, function(root, BackboneTreeModel, _, Backbone) {
 
 	var ArrMethods = {
 		where: function(attrs) {
@@ -255,6 +255,10 @@
 		}
 	});
 
-	Backbone.TreeModel.prototype.collectionConstructor = TreeCollection;
+	TreeModel.prototype.collectionConstructor = TreeCollection;
+	TreeModel._ = _;
+	TreeModel.Backbone = Backbone;
+
+	return TreeModel;
 
 }));

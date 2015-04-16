@@ -1,5 +1,8 @@
 /*global describe, beforeEach, it*/
-function startTests(_, Backbone, expect) {
+function startTests(BackboneTreeModel, expect) {
+
+var _ = BackboneTreeModel._;
+var Backbone = BackboneTreeModel.Backbone;
 
 var tree;
 describe('Backbone Tree', function() {
@@ -356,8 +359,7 @@ describe('Backbone Tree', function() {
 
 
 if(typeof exports !== 'undefined') {
-    require('../src/backbone.treemodel');
-    startTests(require('underscore'), require('backbone'), require('expect.js'));
+    startTests(require('../src/backbone.treemodel'), require('expect.js'));
 } else {
-    startTests(window._, window.Backbone, window.expect);
+    startTests(window.BackboneTreeModel, window.expect);
 }
