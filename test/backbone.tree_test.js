@@ -306,4 +306,46 @@ describe('Backbone Tree', function() {
             });
         });
     });
+
+    describe('toJSON should consider tree changes', function() {
+        it('toJSON should return tree without Sydney', function() {
+            tree = new Backbone.TreeCollection([
+                {
+                    id:1,
+                    title:'Australia',
+                    nodes: [
+                        {
+                            id: 2,
+                            title : 'Sydney'
+                        }
+                    ]
+                },
+            ]);
+
+            //tree without changes:
+            expect(tree.toJSON()).eql([
+                {
+                    id:1,
+                    title:'Australia',
+                    nodes: [
+                        {
+                            id: 2,
+                            title : 'Sydney'
+                        }
+                    ]
+                }
+            ])
+
+            var Sydney = tree.at(0).nodes().at(0);
+            Sydney.collection.remove(Sydney);
+
+            //tree after changes:
+            expect(tree.toJSON()).eql([
+                {
+                    id:1,
+                    title:'Australia'
+                }
+            ])
+        });
+    });
 });
