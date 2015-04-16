@@ -1,4 +1,7 @@
-# Backbone.TreeModel
+# backbone-tree-model
+
+## Installation
+`npm install backbone-tree-model`
 
 ## Usage
 
@@ -131,3 +134,19 @@ tree.where({tagname: 'span'}).length;                      // 2
 tree.remove({tagname: 'span'});                            // remove all matched nodes
 tree.where({tagname: 'span'}).length;                      // 0
 ```
+
+
+## Contributing
+
+Please ensure all current tests pass and write tests for new features.
+
+### Tests
+
+You can run tests either on the browser or using the mocha command line tool.
+
+For browser tests, open `test/index.html`.
+
+To run tests in the terminal
+
+1. `npm install`
+1. `npm test`

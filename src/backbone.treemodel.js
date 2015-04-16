@@ -1,4 +1,24 @@
-(function() {
+// backbone-tree-model 0.9.9
+(function(root, factory) {
+	// Set up Backbone appropriately for the environment. Start with AMD.
+	if (typeof define === 'function' && define.amd) {
+		define(['underscore', 'backbone', 'exports'], function(_, Backbone, exports) {
+			// Export global even in AMD case in case this script is loaded with
+			// others that may still expect a global Backbone.
+			root.Backbone = factory(root, exports, _, Backbone);
+		});
+
+		// Next for Node.js or CommonJS.
+	} else if (typeof exports !== 'undefined') {
+		var _ = require('underscore');
+		var Backbone = require('backbone');
+		factory(root, exports, _, Backbone);
+
+		// Finally, as a browser global.
+	} else {
+		root.BackboneTree = factory(root, {}, root._, root.Backbone);
+	}
+}(this, function(root, BackboneTree, _, Backbone) {
 
 	var ArrMethods = {
 		where: function(attrs) {
@@ -12,16 +32,16 @@
 	var wrapArray = function(array) { return _.extend(array, ArrMethods); };
 
 	var TreeModel = Backbone.TreeModel = Backbone.Model.extend({
-        constructor: function tree(node) {
-            Backbone.Model.prototype.constructor.apply(this, arguments);
-            this._nodes = new this.collectionConstructor([], {
-                model : this.constructor
-            });
-            this._nodes.parent = this;
-            if(node && node.nodes) this.add(node.nodes);
-        },
+		constructor: function tree(node) {
+			Backbone.Model.prototype.constructor.apply(this, arguments);
+			this._nodes = new this.collectionConstructor([], {
+				model : this.constructor
+			});
+			this._nodes.parent = this;
+			if(node && node.nodes) this.add(node.nodes);
+		},
 
-        collectionConstructor : null,
+		collectionConstructor : null,
 
 		/**
 		 * returns JSON object representing tree, account for branch changes
@@ -235,6 +255,6 @@
 		}
 	});
 
-    Backbone.TreeModel.prototype.collectionConstructor = TreeCollection
+	Backbone.TreeModel.prototype.collectionConstructor = TreeCollection;
 
-}).call(this);
+}));

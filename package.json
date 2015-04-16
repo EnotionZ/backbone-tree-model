@@ -1,0 +1,38 @@
+{
+  "name": "backbone-tree-model",
+  "version": "0.9.9",
+  "description": "Tree data structure using Backbone Model and Collection",
+  "main": "src/backbone.treemodel.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EnotionZ/backbone-tree-model.git"
+  },
+  "keywords": [
+    "tree",
+    "datastructure",
+    "data",
+    "structure",
+    "backbone",
+    "model",
+    "collection",
+    "backbone-model"
+  ],
+  "author": "Dominick Pham <dominick@dph.am>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EnotionZ/backbone-tree-model/issues"
+  },
+  "homepage": "https://github.com/EnotionZ/backbone-tree-model",
+  "devDependencies": {
+    "backbone": "^1.1.2",
+    "expect.js": "^0.3.1",
+    "mocha": "^2.2.4",
+    "underscore": "^1.8.3"
+  }
+}
