@@ -3,14 +3,25 @@
 ## Installation
 
 ### in nodejs
+
+install the node module
+
 `npm install backbone-tree-model`
-`var BackboneTreeModel = require('backbone-tree-modle');`
-`var tree = new BackboneTreeModel(treeObject);
+
+then use it in your app
+
+```
+var BackboneTreeModel = require('backbone-tree-modle');
+var tree = new BackboneTreeModel(treeObject);
+```
 
 ### in browser
 just append reference to `src/backbone.treemodel.js` on your page after underscore and Backbone, then
 
-`var tree = new BackboneTreeModel(modelObject);` or
+`var tree = new BackboneTreeModel(modelObject);`
+
+or
+
 `var tree = new Backbone.TreeModel(modelObject);`
 
 
