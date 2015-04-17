@@ -1,4 +1,7 @@
-# backbone-tree-model
+# backbone-tree-model [![Build Status](https://travis-ci.org/EnotionZ/backbone-tree-model.svg?branch=master)](https://travis-ci.org/EnotionZ/backbone-tree-model)
+
+Tree data structure using Backbone Model and Collection
+
 
 ## Installation
 
@@ -50,7 +53,7 @@ see _test/amd.html_
 
 ## Usage
 
-###1. Initialize
+### 1. Initialize
 ```javascript
 var treeObject = {
 	tagname: 'body',
@@ -88,7 +91,7 @@ var treeObject = {
 var tree = new Backbone.TreeModel(treeObject);
 ```
 
-###2. Traversing Tree
+### 2. Traversing Tree
 ```javascript
 tree.get('tagname');                                       // returns "body", `tree` is a backbone model
 var nodes = tree.nodes();                                  // `nodes` is a backbone collection
@@ -106,7 +109,7 @@ tree.contains(sidebar);                                    // true
 sidebar.contains(tree);                                    // false
 ```
 
-###3. Special Search
+### 3. Special Search
 ```javascript
 var content = tree.find('content');                        // `find` returns unique node
 var paragraphNode = tree.findWhere({tagname: 'p'});        // `findWhere` returns first match
@@ -129,7 +132,7 @@ var array2 = specialArray.where({tagname: 'span'});        // has where method a
 array2.length;                                             // 2
 ```
 
-###4. Adding Nodes
+### 4. Adding Nodes
 ```javascript
 var sidebar = tree.find('sidebar');
 
@@ -161,7 +164,7 @@ tree.find('content').nodes().length;                       // 3
 tree.find('sidebar').parent() == tree.find('content');     // true
 ```
 
-###5. Removing Nodes
+### 5. Removing Nodes
 ```javascript
 var tree = new Backbone.TreeModel(treeObject);             // start over with original data
 tree.find('wrapper').nodes().length;                       // 2
