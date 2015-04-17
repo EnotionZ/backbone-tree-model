@@ -5,7 +5,7 @@
 		define(['underscore', 'backbone', 'exports'], function(_, Backbone, exports) {
 			// Export global even in AMD case in case this script is loaded with
 			// others that may still expect a global Backbone.
-			root.Backbone = factory(root, exports, _, Backbone);
+			return root.BackboneTreeModel = factory(root, exports, _, Backbone);
 		});
 
 		// Next for Node.js or CommonJS.

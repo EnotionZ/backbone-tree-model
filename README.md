@@ -16,13 +16,36 @@ var tree = new BackboneTreeModel(treeObject);
 ```
 
 ### in browser
+see _test/index.html_
+
 just append reference to `src/backbone.treemodel.js` on your page after underscore and Backbone, then
 
-`var tree = new BackboneTreeModel(modelObject);`
+`var tree = new BackboneTreeModel(treeObject);`
 
 or
 
-`var tree = new Backbone.TreeModel(modelObject);`
+`var tree = new Backbone.TreeModel(treeObject);`
+
+
+### in browser AMD (using requirejs)
+see _test/amd.html_
+
+```
+<script src="require.js"></script>
+<script>
+	requirejs.config({
+		paths: {
+			jquery: 'path/to/jquery',
+			backbone: 'path/to/backbone',
+			underscore: 'path/to/underscore',
+			treemodel: 'path/to/backbone.treemodel',
+		}
+	});
+	define(['treemodel'], function(TreeModel) {
+		var tree = new TreeModel(treeObject);
+	});
+</script>
+```
 
 
 ## Usage
@@ -166,7 +189,7 @@ Please ensure all current tests pass and write tests for new features.
 
 You can run tests either on the browser or using the mocha command line tool.
 
-For browser tests, open `test/index.html`.
+For browser tests, open `test/index.html` or `test/amd.html`.
 
 To run tests in the terminal
 

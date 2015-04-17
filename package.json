@@ -1,6 +1,6 @@
 {
   "name": "backbone-tree-model",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tree data structure using Backbone Model and Collection",
   "main": "src/backbone.treemodel.js",
   "directories": {
