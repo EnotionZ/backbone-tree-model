@@ -131,3 +131,16 @@ tree.where({tagname: 'span'}).length;                      // 2
 tree.remove({tagname: 'span'});                            // remove all matched nodes
 tree.where({tagname: 'span'}).length;                      // 0
 ```
+
+###6. Alternative nodes attribute
+```javascript
+var TreeModel = Backbone.TreeModel.extend({
+    nodesAttribute: 'children'
+});
+
+var treeObject = {
+    tagname: 'body',
+    children: []
+};
+var tree = new TreeModel(treeObject);
+```
