@@ -261,6 +261,14 @@
             } else {
                 return Backbone.Collection.prototype.where.apply(this, arguments);
             }
+        },
+        walk: function(callback) {
+            var lastNode;
+            this.every(function(node) {
+                lastNode = node.walk(callback);
+                return !lastNode;
+            });
+            return lastNode;
         }
     });
 
