@@ -30,6 +30,9 @@
             });
             this._nodes.parent = this;
             if(node && node[this.nodesAttribute]) this.add(node[this.nodesAttribute]);
+            this.once('sync', function(model, node) {
+                if (node[this.nodesAttribute]) this.add(node[this.nodesAttribute]);
+            });
         },
 
         collectionConstructor : null,
