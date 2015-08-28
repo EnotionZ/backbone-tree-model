@@ -62,14 +62,26 @@
         /**
          * return first matched descendant
          */
-        walk: function(callback) {
-            if (callback(this) === false) return this;
+        walk: function(callback, skipSelf) {
+            if (!skipSelf && callback(this) === false) return this;
             var lastNode;
             this._nodes.every(function(node) {
                 lastNode = node.walk(callback);
                 return !lastNode;
             });
             return lastNode;
+        },
+        
+        /**
+         * return first matched ancestor
+         */
+        leap: function(callback, skipSelf) {
+            if (!skipSelf && callback(this) === false) return this;
+            var lastNode = this.parent();
+            if (lastNode) {
+                lastNode = lastNode.leap(callback);
+            }
+            return lastNode || this;
         },
 
         /**
@@ -137,6 +149,17 @@
          * returns the children Backbone Collection if children nodes exist
          */
         nodes: function() { return this._nodes.length && this._nodes || null; },
+        
+        /**
+         * return ancestors
+         */
+        ancestors: function(callback, skipSelf) {
+            var nodes = [];
+            this.leap(function(node) {
+                nodes.unshift(node);
+            }, skipSelf);
+            return nodes;
+        },
 
         /**
          * returns index of node relative to collection
@@ -248,9 +271,17 @@
             return this.next();
         }
     });
+    
+    TreeModel.prototype.findById = TreeModel.prototype.find;
 
     var TreeCollection = Backbone.TreeCollection = Backbone.Collection.extend({
+        
         model: TreeModel,
+        
+        findById: function(id) {
+            return this.where({ id: id }, { deep: true })[0];
+        },
+        
         where: function(attrs, opts) {
             if(opts && opts.deep) {
                 var nodes = [];
@@ -262,6 +293,7 @@
                 return Backbone.Collection.prototype.where.apply(this, arguments);
             }
         },
+        
         walk: function(callback) {
             var lastNode;
             this.every(function(node) {
@@ -270,6 +302,7 @@
             });
             return lastNode;
         }
+        
     });
 
     Backbone.TreeModel.prototype.collectionConstructor = TreeCollection

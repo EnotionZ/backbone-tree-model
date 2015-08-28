@@ -54,7 +54,7 @@ describe('Backbone Tree', function() {
         });
     });
 
-    describe('#find', function() {
+    describe('#find', function() { // aliased to #findById
         it('Should return matched node', function() {
             var sidebar = tree.find('sidebar');
             expect(sidebar).to.be.ok();
@@ -64,7 +64,7 @@ describe('Backbone Tree', function() {
             expect(tree.find('title').get('tagname')).to.be('h2');
         });
         it('should return root node if id matches root', function() {
-            expect(tree.find('root')).to.be(tree);
+            expect(tree.findById('root')).to.be(tree);
         });
     });
 
@@ -78,7 +78,7 @@ describe('Backbone Tree', function() {
             expect(tree.find('sidebar').where({tagname: 'div'}).length).to.be(1);
         });
     });
-    
+
     describe('#walk', function() {
         it('Should walk all descendants', function() {
             var divs = [];
@@ -95,6 +95,36 @@ describe('Backbone Tree', function() {
             });
             expect(counter).to.be(3);
             expect(node.id).to.be('sidebar');
+        });
+    });
+
+    describe('#leap', function() {
+        it('Should leap all ancestors', function() {
+            var ancestors = [];
+            var node = tree.findById('title');
+            var lastNode = node.leap(function(parent) {
+                ancestors.unshift(parent.id);
+            });
+            expect(ancestors).to.eql(['root', 'wrapper', 'content', 'title']);
+            expect(lastNode.id).to.equal('root');
+        });
+        it('Should break during leap (when returning false)', function() {
+            var ancestors = [];
+            var node = tree.findById('title');
+            var lastNode = node.leap(function(parent) {
+                ancestors.unshift(parent.id);
+                if (parent.id === 'content') return false;
+            });
+            expect(ancestors).to.eql(['content', 'title']);
+            expect(lastNode.id).to.equal('content');
+        });
+    });
+
+    describe('#ancestors', function() {
+        it('Should return all ancestors', function() {
+            var node = tree.findById('title');
+            var ancestors = _.pluck(node.ancestors(), 'id');
+            expect(ancestors).to.eql(['root', 'wrapper', 'content', 'title']);
         });
     });
 
