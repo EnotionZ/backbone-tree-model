@@ -55,6 +55,19 @@
          * return first matched descendant
          */
         findWhere: function(attrs) { return this.where(attrs, true); },
+        
+        /**
+         * return first matched descendant
+         */
+        walk: function(callback) {
+            if (callback(this) === false) return this;
+            var lastNode;
+            this._nodes.every(function(node) {
+                lastNode = node.walk(callback);
+                return !lastNode;
+            });
+            return lastNode;
+        },
 
         /**
          * return all matched descendants

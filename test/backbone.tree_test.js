@@ -78,6 +78,25 @@ describe('Backbone Tree', function() {
             expect(tree.find('sidebar').where({tagname: 'div'}).length).to.be(1);
         });
     });
+    
+    describe('#walk', function() {
+        it('Should walk all descendants', function() {
+            var divs = [];
+            tree.walk(function(node) {
+                if (node.get('tagname') === 'div') divs.push(node);
+            });
+            expect(divs.length).to.be(3);
+        });
+        it('Should break during walk (when returning false)', function() {
+            var counter = 0;
+            var node = tree.walk(function(node) {
+                counter++;
+                if (node.id === 'sidebar') return false;
+            });
+            expect(counter).to.be(3);
+            expect(node.id).to.be('sidebar');
+        });
+    });
 
     describe('#isRoot', function() {
         it('Should return true when current node is root node', function() {
