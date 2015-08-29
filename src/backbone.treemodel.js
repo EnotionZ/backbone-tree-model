@@ -30,8 +30,34 @@
             });
             this._nodes.parent = this;
             if(node && node[this.nodesAttribute]) this.add(node[this.nodesAttribute]);
+            
             this.once('sync', function(model, node) {
                 if (node[this.nodesAttribute]) this.add(node[this.nodesAttribute]);
+            });
+            
+            this.on('node:add', function(model, collection, opts) {
+                var parent = this.parent();
+                if (parent) parent.trigger('node:add', model, collection, opts);
+            });
+            
+            this.on('node:remove', function(model, collection, opts) {
+                var parent = this.parent();
+                if (parent) parent.trigger('node:add', model, collection, opts);
+            });
+            
+            this.listenTo(this._nodes, 'remove', function(model, collection, opts) {
+                var parent = this.parent();
+                if (parent) parent.trigger('node:remove', model, collection, opts);
+            });
+            
+            this.listenTo(this._nodes, 'add', function(model, collection, opts) {
+                var parent = this.parent();
+                if (parent) parent.trigger('node:add', model, collection, opts);
+            });
+            
+            this.listenTo(this._nodes, 'remove', function(model, collection, opts) {
+                var parent = this.parent();
+                if (parent) parent.trigger('node:remove', model, collection, opts);
             });
         },
 
@@ -160,6 +186,15 @@
             }, skipSelf);
             return nodes;
         },
+        
+        /**
+         * return ancestor values
+         */
+        path: function(attribute, skipSelf) {
+            return _.map(this.ancestors(), function(ancestor) {
+                return ancestor.get(attribute);
+            }, skipSelf);
+        },
 
         /**
          * returns index of node relative to collection
@@ -278,8 +313,21 @@
         
         model: TreeModel,
         
+        get: function(id, opts) {
+            if(opts && opts.deep) {
+                return this.findById(id);
+            } else {
+                return Backbone.Collection.prototype.get.apply(this, arguments);
+            }
+        },
+        
         findById: function(id) {
-            return this.where({ id: id }, { deep: true })[0];
+            var node;
+            this.walk(function(n) {
+                if (n.id === id) node = n;
+                return !node;
+            });
+            return node;
         },
         
         where: function(attrs, opts) {
