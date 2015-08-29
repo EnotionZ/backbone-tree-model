@@ -153,7 +153,7 @@
         /**
          * return ancestors
          */
-        ancestors: function(callback, skipSelf) {
+        ancestors: function(skipSelf) {
             var nodes = [];
             this.leap(function(node) {
                 nodes.unshift(node);
