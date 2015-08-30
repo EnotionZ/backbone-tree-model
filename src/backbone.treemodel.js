@@ -21,6 +21,18 @@
         }
     };
     var wrapArray = function(array) { return _.extend(array, ArrMethods); };
+    
+    var bubbleNodeEvent = function(eventName) {
+        eventName = 'node:' + eventName;
+        return function(model, collection, opts) {
+            var parent = this.parent();
+            if (parent) {
+                parent.trigger(eventName, model, collection, opts);
+            } else if (this.collection) {
+                this.collection.trigger(eventName, model, collection, opts);
+            }
+        }
+    };
 
     var TreeModel = Backbone.TreeModel = Backbone.Model.extend({
         constructor: function tree(node) {
@@ -35,30 +47,22 @@
                 if (node[this.nodesAttribute]) this.add(node[this.nodesAttribute]);
             });
             
-            this.on('node:add', function(model, collection, opts) {
+            this.on('node:change', function(model, collection, opts) {
                 var parent = this.parent();
-                if (parent) parent.trigger('node:add', model, collection, opts);
+                if (parent) {
+                    parent.trigger('node:change', model, collection, opts);
+                } else if (this.collection) {
+                    this.collection.trigger('node:change', model, collection, opts);
+                }
             });
             
-            this.on('node:remove', function(model, collection, opts) {
-                var parent = this.parent();
-                if (parent) parent.trigger('node:add', model, collection, opts);
-            });
+            this.on('node:add', bubbleNodeEvent('add'));
+            this.on('node:remove', bubbleNodeEvent('remove'));
+            this.on('node:change', bubbleNodeEvent('change'));
             
-            this.listenTo(this._nodes, 'remove', function(model, collection, opts) {
-                var parent = this.parent();
-                if (parent) parent.trigger('node:remove', model, collection, opts);
-            });
-            
-            this.listenTo(this._nodes, 'add', function(model, collection, opts) {
-                var parent = this.parent();
-                if (parent) parent.trigger('node:add', model, collection, opts);
-            });
-            
-            this.listenTo(this._nodes, 'remove', function(model, collection, opts) {
-                var parent = this.parent();
-                if (parent) parent.trigger('node:remove', model, collection, opts);
-            });
+            this.listenTo(this._nodes, 'add', bubbleNodeEvent('add'));
+            this.listenTo(this._nodes, 'remove', bubbleNodeEvent('remove'));
+            this.listenTo(this._nodes, 'change', bubbleNodeEvent('change'));
         },
 
         collectionConstructor : null,
@@ -68,10 +72,12 @@
         /**
          * returns JSON object representing tree, account for branch changes
          */
-        toJSON: function() {
-            var jsonObj = _.clone(_.omit(this.attributes, this.nodesAttribute));
-            var children = this._nodes.toJSON();
-            if(children.length) jsonObj[this.nodesAttribute] = children;
+        toJSON: function(opts) {
+            var flatten = opts && opts.deep === false;
+            var omit = [this.nodesAttribute].concat((opts && opts.omit) || []);
+            var jsonObj = _.clone(_.omit(this.attributes, omit));
+            var children = this._nodes.toJSON(opts);
+            if(children.length && !flatten) jsonObj[this.nodesAttribute] = children;
             return jsonObj;
         },
 
