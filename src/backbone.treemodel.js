@@ -196,6 +196,11 @@
 		 * add child/children nodes to Backbone Collection
 		 */
 		add: function(node) {
+			if(!Object.keys(this.attributes).length) {
+				this.set(node);
+				if(node && node.nodes) this.add(node.nodes);
+				return this;
+			}
 			if(node instanceof Backbone.Model && node.collection) node.collection.remove(node);
 			this._nodes.add.apply(this._nodes, arguments);
 			return this;

@@ -59,6 +59,29 @@ function runTests(BackboneTreeModel, expect) {
             });
         });
 
+        describe('After creating an empty tree', function() {
+            it('should add tree data correctly', function() {
+                var newTree = new Backbone.TreeModel();
+                newTree.add({
+                    id: 'title_2',
+                    tagname: 'h1',
+                    nodes: [
+                        {
+                            id: 'anchor',
+                            tagname: 'a',
+                            nodes: [
+                                { tagname: 'span' }
+                            ]
+                        }
+                    ]
+                })
+                var anchor = newTree.find('anchor');
+                expect(newTree.root().get('id')).to.be('title_2');
+                expect(newTree.nodes().length).to.be(1);
+                expect(anchor).to.be.ok();
+                expect(anchor.nodes().length).to.be(1);
+            });
+        });
         describe('#find', function() {
             it('Should return matched node', function() {
                 var sidebar = tree.find('sidebar');
