@@ -52,7 +52,16 @@
 			if(children.length) jsonObj.nodes = children;
 			return jsonObj;
 		},
+		toArray: function(){
+			var arr = [];
+			if (!this.isRoot())
+				arr = [this];
+			this._nodes.each(function(n){
+				arr = arr.concat(n.toArray(true));
+			});
+			return arr;
 
+		},
 		/**
 		 * returns descendant matching :id
 		 */
