@@ -20,18 +20,43 @@
         }
 }(this, function(root, BackboneTreeModel, _, Backbone) {
 
-    var ArrMethods = {
+
+    /**
+     * @define {WrappedArray} array-like object that has special methods
+     */
+    var WrappedArray = {
+
+        /**
+         * Find all descendants with matching attributes
+         * @return WrappedArray
+         */
         where: function(attrs) {
             var nodes = [];
             _.each(this, function(model) {
                 nodes = nodes.concat(model.where(attrs));
             });
-            return wrapArray(_.uniq(nodes));
+            return _wrapArray(_.uniq(nodes));
         }
     };
-    var wrapArray = function(array) { return _.extend(array, ArrMethods); };
 
+    /**
+     * extend an array with special methods
+     * @param {array} array
+     * @return WrappedArray
+     */
+    var _wrapArray = function(array) { return _.extend(array, WrappedArray); };
+
+
+    /**
+     * @define {TreeModel}
+     */
     var TreeModel = Backbone.TreeModel = Backbone.Model.extend({
+
+        /**
+         * @constructor
+         * initializes TreeModel with node data
+         * @param {object} node
+         */
         constructor: function tree(node) {
             Backbone.Model.prototype.constructor.apply(this, arguments);
             this._nodes = new this.collectionConstructor([], {
@@ -41,10 +66,13 @@
             if(node && node.nodes) this.add(node.nodes);
         },
 
+        /**
+         * collectionConstructor to be assigned after TreeCollection is defined
+         */
         collectionConstructor : null,
 
         /**
-         * returns JSON object representing tree, account for branch changes
+         * @return object representing tree, account for branch changes
          */
         toJSON: function() {
             var jsonObj = _.clone(_.omit(this.attributes, 'nodes'));
@@ -54,17 +82,32 @@
         },
 
         /**
-         * returns descendant matching :id
+         * find descendants based on cid
+         * @param {number} cid
+         * @return TreeModel
+         */
+        findByCid: function(cid) {
+            if(this.cid === cid) return this;
+            return this.nodes() && this.nodes().findByCid(cid) || null;
+        },
+
+        /**
+         * find descendant TreeModel with matching ID
+         * @param {string} id
+         * @return TreeModel
          */
         find: function(id) { return this.findWhere({id: id}); },
 
         /**
-         * return first matched descendant
+         * Find first TreeModel descendant with matching attributes
+         * @param {object} attrs - key:val attributes to match
+         * @return TreeModel
          */
         findWhere: function(attrs) { return this.where(attrs, true); },
 
         /**
-         * return all matched descendants
+         * Find all TreeModel descendants with matching attributes
+         * @return WrappedArray
          */
         where: function(attrs, first, excludeCurrentNode) {
             var nodes = [], matchedNode;
@@ -96,22 +139,26 @@
                 });
 
                 // return all matched nodes
-                return wrapArray(nodes);
+                return _wrapArray(nodes);
             }
         },
 
         /**
-         * returns true if current node is root node
+         * check if root node
+         * @return boolean
          */
         isRoot: function() { return this.parent() === null; },
 
         /**
-         * returns the root for any node
+         * get root node from any branch node
+         * @return TreeModel
          */
         root: function() { return this.parent() && this.parent().root() || this; },
 
         /**
-         * checks if current node contains argument node
+         * check if a node is a descendant
+         * @param {TreeModel} node
+         * @return boolean
          */
         contains: function(node) {
             if(!node || !(node.isRoot && node.parent) || node.isRoot()) return false;
@@ -120,17 +167,20 @@
         },
 
         /**
-         * returns the parent node
+         * get parent node or null if parent doesn't exist (root node)
+         * @return TreeModel
          */
         parent: function() { return this.collection && this.collection.parent || null; },
 
         /**
-         * returns the children Backbone Collection if children nodes exist
+         * get children nodes of null if leaf node
+         * @return {TreeCollection}
          */
         nodes: function() { return this._nodes.length && this._nodes || null; },
 
         /**
-         * returns index of node relative to collection
+         * get index of self within parent's TreeCollection
+         * @return {integer}
          */
         index: function() {
             if(this.isRoot()) return null;
@@ -138,7 +188,8 @@
         },
 
         /**
-         * returns the node to the right
+         * get next sibling
+         * @return TreeModel
          */
         next: function() {
             if(this.isRoot()) return null;
@@ -151,7 +202,8 @@
         },
 
         /**
-         * returns the node to the left
+         * get previous sibling
+         * @return TreeModel
          */
         prev: function() {
             if(this.isRoot()) return null;
@@ -166,6 +218,9 @@
         /**
          * removes current node if no attributes arguments is passed,
          * otherswise remove matched nodes or first matched node
+         * @param {object} attrs
+         * @param {boolean} first
+         * @return {boolean|TreeModel} true if self-remove successful, otherwise return self
          */
         remove: function(attrs, first) {
             if(!attrs) {
@@ -186,6 +241,7 @@
 
         /**
          * removes all children nodes
+         * @return TreeModel
          */
         empty: function() {
             this._nodes.reset();
@@ -194,6 +250,8 @@
 
         /**
          * add child/children nodes to Backbone Collection
+         * @param {object|array|TreeModel|TreeCollection} node
+         * @return TreeModel
          */
         add: function(node) {
             if(node instanceof Backbone.Model && node.collection) node.collection.remove(node);
@@ -202,7 +260,9 @@
         },
 
         /**
-         * inserts a node before the current node
+         * inserts a node before self
+         * @param {TreeModel} node
+         * @return TreeModel
          */
         insertBefore: function(node) {
             if(!this.isRoot()) {
@@ -213,7 +273,9 @@
         },
 
         /**
-         * inserts a node after the current node
+         * inserts a node after self
+         * @param {TreeModel} node
+         * @return TreeModel
          */
         insertAfter: function(node) {
             if(!this.isRoot()) {
@@ -225,6 +287,8 @@
 
         /**
          * shorthand for getting/inserting nodes before
+         * @param {object|array|TreeModel|TreeCollection} nodes
+         * @param TreeModel - self or previous node
          */
         before: function(nodes) {
             if(nodes) return this.insertBefore(nodes);
@@ -232,32 +296,94 @@
         },
 
         /**
-         * shorthand for getting/inserting nodes before
+         * shorthand for getting/inserting nodes after
+         * @param {object|array|TreeModel|TreeCollection} nodes
+         * @param TreeModel - self or next node
          */
         after: function(nodes) {
             if(nodes) return this.insertAfter(nodes);
             return this.next();
-        }
+        },
+
+        /**
+         * flatten self and all descendants into single array
+         * @return WrappedArray
+         */
+        flatten: function() {
+            var nodes = [], children = this.nodes();
+            nodes.push(this);
+            if(children) nodes.push(children.flatten());
+            return _wrapArray(_.flatten(nodes));
+        },
+
+        /**
+         * alias for flatten
+         */
+        toArray: null
     });
 
+
+    /**
+     * @define {TreeCollection}
+     */
     var TreeCollection = Backbone.TreeCollection = Backbone.Collection.extend({
         model: TreeModel,
+
+        /**
+         * Find all descendants with matching attributes
+         * @return WrappedArray
+         */
         where: function(attrs, opts) {
             if(opts && opts.deep) {
                 var nodes = [];
                 this.each(function(model) {
                     nodes = nodes.concat(model.where(attrs));
                 });
-                return wrapArray(nodes);
+                return _wrapArray(nodes);
             } else {
                 return Backbone.Collection.prototype.where.apply(this, arguments);
             }
-        }
+        },
+
+        /**
+         * find descendants based on cid
+         * @param {number} cid
+         * @return TreeModel
+         */
+        findByCid: function(cid) {
+            var model = this.get({cid: cid});
+            if(model) {
+                return model;
+            } else {
+                for(var node, i = 0; i < this.length; i++) {
+                    node = this.at(i);
+                    model = node.findByCid(cid);
+                    if(model) {
+                        return model;
+                    }
+                }
+            }
+        },
+
+        /**
+         * flatten self and all descendants into single array
+         * @return WrappedArray
+         */
+        flatten: function() {
+            return _wrapArray(_.flatten(this.map(function(n) { return n.flatten(); })));
+        },
+
+        /**
+         * alias for flatten
+         */
+        toArray: null
     });
 
-    TreeModel.prototype.collectionConstructor = TreeCollection;
     TreeModel._ = _;
     TreeModel.Backbone = Backbone;
+    TreeModel.prototype.toArray = TreeModel.prototype.flatten;
+    TreeModel.prototype.collectionConstructor = TreeCollection;
+    TreeCollection.prototype.toArray = TreeCollection.prototype.flatten;
 
     return TreeModel;
 

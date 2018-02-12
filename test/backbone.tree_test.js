@@ -275,6 +275,18 @@ function runTests(BackboneTreeModel, expect) {
             });
         });
 
+        describe('#flatten', function() {
+            it('should return a flattend array', function() {
+                var arr = tree.flatten();
+                expect(arr.length).to.be(14);
+            });
+
+            it('should support toArray alias', function() {
+                var arr = tree.toArray();
+                expect(arr.length).to.be(14);
+            });
+        });
+
         describe('should be able to specify model constructor with Model', function() {
             var MyCollection = Backbone.TreeCollection.extend({}),
                 MyModel = Backbone.TreeModel.extend({
