@@ -1,4 +1,4 @@
-// backbone-tree-model 0.9.9
+// backbone-tree-model 1.1.1
 (function(root, factory) {
     // Set up Backbone appropriately for the environment. Start with AMD.
         if (typeof define === 'function' && define.amd) {
@@ -70,6 +70,42 @@
          * collectionConstructor to be assigned after TreeCollection is defined
          */
         collectionConstructor : null,
+
+        /**
+         * check if child of root node
+         */
+        isRootBranch: function() {
+            return this.parent() && this.parent().isRoot();
+        },
+
+        /**
+         * set descendant properties
+         * @param {object} argument properties to set
+         */
+        setPropDescendants: function() {
+            var args = Array.prototype.slice.call(arguments);
+            this.set.apply(this, args);
+            if(this.nodes()) {
+                this.nodes().each(function(n) {
+                    n.setPropDescendants.apply(n, args);
+                });
+            }
+        },
+
+        /**
+         * traverse up the tree and find closest node that contains a property
+         * @param {string} prop
+         * @return {property}
+         */
+        getClosestAncestorProperty: function(prop) {
+            var value = this.get(prop);
+            if(this.isRoot() || !_.isUndefined(value)) {
+                return value;
+            } else {
+                return this.parent().getClosestAncestorProperty(prop);
+            }
+        },
+
 
         /**
          * @return object representing tree, account for branch changes
