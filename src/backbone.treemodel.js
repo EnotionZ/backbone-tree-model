@@ -20,7 +20,6 @@
         }
 }(this, function(root, BackboneTreeModel, _, Backbone) {
 
-
     /**
      * @define {WrappedArray} array-like object that has special methods
      */
@@ -290,6 +289,11 @@
          * @return TreeModel
          */
         add: function(node) {
+            if(!Object.keys(this.attributes).length) {
+              this.set(node);
+              if(node && node.nodes) this.add(node.nodes);
+              return this;
+            }
             if(node instanceof Backbone.Model && node.collection) node.collection.remove(node);
             this._nodes.add.apply(this._nodes, arguments);
             return this;
@@ -422,5 +426,4 @@
     TreeCollection.prototype.toArray = TreeCollection.prototype.flatten;
 
     return TreeModel;
-
 }));
